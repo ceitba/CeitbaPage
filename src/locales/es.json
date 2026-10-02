@@ -48,9 +48,11 @@
         "categories": "Categorías"
       },
       "categories": {
-        "help": "Las categorías son los \"chips\" con los que se filtran los beneficios. Editá su color y orden acá.",
+        "help": "Las categorías son los \"chips\" con los que se filtran los beneficios. Editá su nombre, color y orden acá.",
         "colorVar": "Variable de color",
-        "order": "Orden"
+        "order": "Orden",
+        "nameEs": "Nombre (ES)",
+        "nameEn": "Nombre (EN)"
       },
       "cards": {
         "filter": "Categoría",

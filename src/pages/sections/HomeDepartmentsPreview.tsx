@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useDepartments } from '../../hooks/useContent'
+import LoadError from '../../components/LoadError'
 
 const ICONS: Record<string, React.ReactNode> = {
   it: (
@@ -45,7 +46,7 @@ const ICONS: Record<string, React.ReactNode> = {
 
 export default function HomeDepartmentsPreview({ onSeeAll }: { onSeeAll: () => void }) {
   const { t } = useTranslation()
-  const { data, loading } = useDepartments()
+  const { data, loading, error, reload } = useDepartments()
   const departments = (data ?? []).slice(0, 6)
 
   return (
@@ -72,6 +73,9 @@ export default function HomeDepartmentsPreview({ onSeeAll }: { onSeeAll: () => v
           <SeeAllButton onClick={onSeeAll} label={t('home.departments.seeAll')} />
         </div>
 
+        {error && !loading ? (
+          <LoadError onRetry={() => void reload()} />
+        ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {loading
             ? Array.from({ length: 6 }).map((_, i) => (
@@ -102,6 +106,7 @@ export default function HomeDepartmentsPreview({ onSeeAll }: { onSeeAll: () => v
               ))
           }
         </div>
+        )}
       </div>
     </section>
   )

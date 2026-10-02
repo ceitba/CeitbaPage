@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useBenefits } from '../../hooks/useContent'
+import LoadError from '../../components/LoadError'
+import { benefitCategoryName } from '../../utils/benefits'
 
 const ICONS: Record<string, React.ReactNode> = {
   deportes: (
@@ -32,8 +34,9 @@ const ICONS: Record<string, React.ReactNode> = {
 }
 
 export default function HomeBenefitsPreview({ onSeeAll }: { onSeeAll: () => void }) {
-  const { t } = useTranslation()
-  const { data, loading } = useBenefits()
+  const { t, i18n } = useTranslation()
+  const lang: 'es' | 'en' = i18n.language === 'en' ? 'en' : 'es'
+  const { data, loading, error, reload } = useBenefits()
   const categories = data ?? []
 
   return (
@@ -70,6 +73,9 @@ export default function HomeBenefitsPreview({ onSeeAll }: { onSeeAll: () => void
           </button>
         </div>
 
+        {error && !loading ? (
+          <LoadError onRetry={() => void reload()} />
+        ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading
             ? Array.from({ length: 5 }).map((_, i) => (
@@ -94,7 +100,7 @@ export default function HomeBenefitsPreview({ onSeeAll }: { onSeeAll: () => void
                       {ICONS[cat.slug]}
                     </span>
                     <h3 className="font-display font-bold text-h5 text-ink-primary dark:text-[#f4f4f5] group-hover:text-primary transition-colors duration-150">
-                      {t(`benefits.${cat.slug}.name`, { defaultValue: cat.slug })}
+                      {benefitCategoryName(cat.slug, cat, lang, t)}
                     </h3>
                   </div>
                   <p className="font-body text-body-sm text-ink-secondary dark:text-[#a1a1aa] line-clamp-3">
@@ -104,6 +110,7 @@ export default function HomeBenefitsPreview({ onSeeAll }: { onSeeAll: () => void
               ))
           }
         </div>
+        )}
       </div>
     </section>
   )

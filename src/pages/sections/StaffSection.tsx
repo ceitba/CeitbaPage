@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStaffMembers, useStaffYears } from '../../hooks/useContent'
 import type { StaffMember } from '../../api/content'
+import LoadError from '../../components/LoadError'
 
 const PLACEHOLDER_COUNT = 8
 
@@ -57,15 +58,20 @@ export default function StaffSection() {
   const { t, i18n } = useTranslation()
   const lang: 'es' | 'en' = i18n.language === 'en' ? 'en' : 'es'
 
-  const { data: years } = useStaffYears()
+  const { data: years, loading: loadingYears, error: yearsError, reload: reloadYears } = useStaffYears()
   const yearList = years ?? []
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
   useEffect(() => {
     if (selectedYear == null && yearList.length > 0) setSelectedYear(yearList[0])
   }, [yearList, selectedYear])
 
-  const { data: members, loading: loadingMembers } = useStaffMembers(selectedYear)
+  const { data: members, loading: membersLoading, error: membersError, reload: reloadMembers } = useStaffMembers(selectedYear)
   const memberList = members ?? []
+  // useStaffMembers(null) resolves [] immediately, so until the years list
+  // has loaded and a year is selected we're still loading, not "empty".
+  const loadingMembers = loadingYears || (selectedYear == null && yearList.length > 0) || membersLoading
+  const failed = !loadingMembers && (yearsError != null || membersError != null)
+  const retry = () => { void (yearsError != null ? reloadYears() : reloadMembers()) }
 
   const grouped = useMemo(() => {
     // Preserve API order (department slug ASC, then displayOrder, then name).
@@ -110,7 +116,9 @@ export default function StaffSection() {
           </div>
         )}
 
-        {!loadingMembers && !hasAnyMember && (
+        {failed && <LoadError onRetry={retry} />}
+
+        {!failed && !loadingMembers && !hasAnyMember && (
           <div className="flex flex-col items-center gap-4 py-12 px-6 mb-8 rounded-card border border-dashed border-border dark:border-[#3f3f46] text-center">
             <div className="w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900 flex items-center justify-center" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -130,7 +138,7 @@ export default function StaffSection() {
           </div>
         )}
 
-        {hasAnyMember ? (
+        {failed ? null : hasAnyMember ? (
           Array.from(grouped.entries()).map(([deptSlug, list]) => (
             <div key={deptSlug} className="mb-10 last:mb-0">
               <h3 className="font-display font-bold text-h5 text-ink-primary dark:text-[#f4f4f5] mb-4">

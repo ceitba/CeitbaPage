@@ -10,6 +10,7 @@ import {
   type BenefitEntry,
 } from '../../api/content'
 import { useBenefits } from '../../hooks/useContent'
+import { benefitCategoryName } from '../../utils/benefits'
 
 type Tab = 'cards' | 'categories'
 
@@ -308,13 +309,14 @@ function CardEditor({ draft, categories, busy, onChange, onSave, onCancel }: Edi
 }
 
 function CategoriesTab() {
-  const { t } = useTranslation()
-  const { data, loading } = useBenefits()
+  const { t, i18n } = useTranslation()
+  const lang: 'es' | 'en' = i18n.language === 'en' ? 'en' : 'es'
+  const { data, loading, reload } = useBenefits()
   const [drafts, setDrafts] = useState<Record<string, BenefitEntry>>({})
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  if (loading) return <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.loading')}</p>
+  if (loading && !data) return <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.loading')}</p>
   const categories = data ?? []
 
   function draftFor(b: BenefitEntry): BenefitEntry {
@@ -334,6 +336,9 @@ function CategoriesTab() {
       const { slug: _slug, ...payload } = d
       void _slug
       await updateBenefit(slug, payload)
+      // Refetch before dropping the draft so the inputs show the saved
+      // values instead of snapping back to the stale list.
+      await reload()
       setDrafts((prev) => { const { [slug]: _, ...rest } = prev; void _; return rest })
     } catch (e) {
       setError((e as Error).message)
@@ -357,10 +362,15 @@ function CategoriesTab() {
           <article key={b.slug} className="p-4 rounded-card border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] flex flex-col gap-3">
             <header className="flex items-center justify-between">
               <h3 className="font-display font-bold text-h5">
-                {t(`benefits.${b.slug}.name`, { defaultValue: b.slug })}
+                {benefitCategoryName(b.slug, b, lang, t)}
               </h3>
               <span className="font-mono text-label uppercase tracking-widest text-ink-secondary">{b.slug}</span>
             </header>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label={t('manage.benefits.categories.nameEs')} value={d.nameEs ?? ''} onChange={(v) => patch(b.slug, { nameEs: v || null })} />
+              <Field label={t('manage.benefits.categories.nameEn')} value={d.nameEn ?? ''} onChange={(v) => patch(b.slug, { nameEn: v || null })} />
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <Field label={t('manage.benefits.categories.colorVar')} value={d.colorVar} onChange={(v) => patch(b.slug, { colorVar: v })} />

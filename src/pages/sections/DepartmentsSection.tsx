@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useDepartments } from '../../hooks/useContent'
+import LoadError from '../../components/LoadError'
 
 const ICONS: Record<string, React.ReactNode> = {
   it: (
@@ -45,7 +46,7 @@ const ICONS: Record<string, React.ReactNode> = {
 
 export default function DepartmentsSection() {
   const { t } = useTranslation()
-  const { data, loading } = useDepartments()
+  const { data, loading, error, reload } = useDepartments()
   const departments = data ?? []
 
   return (
@@ -59,6 +60,9 @@ export default function DepartmentsSection() {
             {t('departments.sectionSubtitle')}
           </p>
         </div>
+        {error && !loading ? (
+          <LoadError onRetry={() => void reload()} />
+        ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading
             ? Array.from({ length: 6 }).map((_, i) => (
@@ -88,6 +92,7 @@ export default function DepartmentsSection() {
               ))
           }
         </div>
+        )}
       </div>
     </section>
   )

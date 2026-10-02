@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBenefitCards, useBenefits } from '../../hooks/useContent'
 import type { BenefitCard, BenefitEntry } from '../../api/content'
+import LoadError from '../../components/LoadError'
+import { benefitCategoryName } from '../../utils/benefits'
 
 const ALL = '__all__'
 
@@ -38,8 +40,8 @@ const ICONS: Record<string, React.ReactNode> = {
 export default function BenefitsSection() {
   const { t, i18n } = useTranslation()
   const lang: 'es' | 'en' = i18n.language === 'en' ? 'en' : 'es'
-  const { data: categories, loading: loadingCategories } = useBenefits()
-  const { data: cards, loading: loadingCards } = useBenefitCards()
+  const { data: categories, loading: loadingCategories, error: categoriesError, reload: reloadCategories } = useBenefits()
+  const { data: cards, loading: loadingCards, error: cardsError, reload: reloadCards } = useBenefitCards()
   const categoryList: BenefitEntry[] = categories ?? []
   const cardList: BenefitCard[] = cards ?? []
 
@@ -51,6 +53,11 @@ export default function BenefitsSection() {
   }, [cardList, active])
 
   const loading = loadingCategories || loadingCards
+  const failed = categoriesError != null || cardsError != null
+  const retry = () => {
+    if (categoriesError != null) void reloadCategories()
+    if (cardsError != null) void reloadCards()
+  }
 
   return (
     <section className="py-section-mobile lg:py-section" aria-labelledby="benefits-heading">
@@ -74,7 +81,7 @@ export default function BenefitsSection() {
             {categoryList.map((c) => (
               <Chip
                 key={c.slug}
-                label={t(`benefits.${c.slug}.name`, { defaultValue: c.slug })}
+                label={benefitCategoryName(c.slug, c, lang, t)}
                 colorVar={c.colorVar}
                 icon={ICONS[c.slug]}
                 active={active === c.slug}
@@ -84,7 +91,9 @@ export default function BenefitsSection() {
           </div>
         )}
 
-        {loading ? (
+        {failed && !loading ? (
+          <LoadError onRetry={retry} />
+        ) : loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="h-72 rounded-card border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] skeleton" />
@@ -164,7 +173,7 @@ function BenefitCardView({
   const summary = lang === 'es' ? card.summaryEs : card.summaryEn
   const bullets = lang === 'es' ? card.bulletsEs : card.bulletsEn
   const ctaLabel = lang === 'es' ? card.ctaLabelEs : card.ctaLabelEn
-  const categoryLabel = t(`benefits.${card.categorySlug}.name`, { defaultValue: card.categorySlug })
+  const categoryLabel = benefitCategoryName(card.categorySlug, category, lang, t)
 
   return (
     <article

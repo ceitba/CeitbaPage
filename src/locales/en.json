@@ -48,9 +48,11 @@
         "categories": "Categories"
       },
       "categories": {
-        "help": "Categories are the chips users filter benefits by. Edit their color and order here.",
+        "help": "Categories are the chips users filter benefits by. Edit their name, color and order here.",
         "colorVar": "Color variable",
-        "order": "Order"
+        "order": "Order",
+        "nameEs": "Name (ES)",
+        "nameEn": "Name (EN)"
       },
       "cards": {
         "filter": "Category",
