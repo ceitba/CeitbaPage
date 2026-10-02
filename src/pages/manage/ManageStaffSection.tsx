@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   createStaffMember,
@@ -33,12 +33,34 @@ export default function ManageStaffSection() {
   const [editing, setEditing] = useState<Draft | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [loadingMembers, setLoadingMembers] = useState(true)
+  // Only the latest roster request may write state: switching years quickly
+  // must not let an older year's response land last (Edit/Delete would then
+  // act on the wrong year's members).
+  const reqIdRef = useRef(0)
 
   useEffect(() => { fetchStaffYears().then(setYears).catch(() => setYears([])) }, [])
-  useEffect(() => { reloadMembers() }, [year]) // eslint-disable-line
+  // Clear the previous year's rows right away so they can't be edited or
+  // deleted while the new year loads.
+  useEffect(() => { setMembers([]); reloadMembers() }, [year]) // eslint-disable-line
 
   function reloadMembers() {
-    fetchStaffMembers(year).then(setMembers).catch((e: Error) => setError(e.message))
+    const id = ++reqIdRef.current
+    setLoadingMembers(true)
+    fetchStaffMembers(year)
+      .then((data) => {
+        if (reqIdRef.current !== id) return
+        setMembers(data)
+        setError(null)
+      })
+      .catch((e: Error) => {
+        if (reqIdRef.current !== id) return
+        setMembers([])
+        setError(e.message)
+      })
+      .finally(() => {
+        if (reqIdRef.current === id) setLoadingMembers(false)
+      })
   }
 
   const grouped = useMemo(() => {
@@ -145,7 +167,11 @@ export default function ManageStaffSection() {
         </section>
       ))}
 
-      {grouped.size === 0 && (
+      {loadingMembers && grouped.size === 0 && (
+        <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.loading')}</p>
+      )}
+
+      {!loadingMembers && !error && grouped.size === 0 && (
         <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.staff.noneForYear')}</p>
       )}
 
