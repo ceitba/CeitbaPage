@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useThemeContext } from '../context/ThemeContext'
 import { fetchCareersWithPlans, fetchMyProfile, patchMyProfile, type CareerWithPlans, type MeProfile } from '../api/profile'
 import { getSession } from '../store/authStore'
+import { safeHttpUrl } from '../utils/url'
 
 export default function ProfilePage() {
   const { t, i18n } = useTranslation()
@@ -28,6 +29,7 @@ export default function ProfilePage() {
 
   if (loading) return null
   if (!profile) return <Navigate to="/" replace />
+  const avatarUrl = safeHttpUrl(profile.avatarUrl)
 
   async function changeCareer(nextId: string) {
     setError(null); setBusy('career')
@@ -78,8 +80,8 @@ export default function ProfilePage() {
       )}
 
       <section className="mb-8 p-5 rounded-card border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] flex items-center gap-4">
-        {profile.avatarUrl ? (
-          <img src={profile.avatarUrl} alt={profile.name ?? profile.email} className="w-16 h-16 rounded-full object-cover" />
+        {avatarUrl ? (
+          <img src={avatarUrl} alt={profile.name ?? profile.email} className="w-16 h-16 rounded-full object-cover" />
         ) : (
           <div className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center font-display font-bold text-h4 text-primary">
             {(profile.name ?? profile.email).slice(0, 2).toUpperCase()}

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useStaffMembers, useStaffYears } from '../../hooks/useContent'
 import type { StaffMember } from '../../api/content'
 import LoadError from '../../components/LoadError'
+import { safeHttpUrl } from '../../utils/url'
 
 const PLACEHOLDER_COUNT = 8
 
@@ -13,12 +14,14 @@ function MemberCard({ member, lang }: { member: StaffMember; lang: 'es' | 'en' }
     .join('')
     .slice(0, 2)
     .toUpperCase()
+  const photoUrl = safeHttpUrl(member.photoUrl)
+  const linkedinUrl = safeHttpUrl(member.linkedinUrl)
 
   return (
     <div className="flex flex-col items-center gap-3 p-5 rounded-card border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] shadow-card text-center">
-      {member.photoUrl ? (
+      {photoUrl ? (
         <img
-          src={member.photoUrl}
+          src={photoUrl}
           alt={member.name}
           className="w-14 h-14 rounded-full object-cover"
         />
@@ -35,9 +38,9 @@ function MemberCard({ member, lang }: { member: StaffMember; lang: 'es' | 'en' }
           {lang === 'es' ? member.roleEs : member.roleEn}
         </p>
       </div>
-      {member.linkedinUrl && (
+      {linkedinUrl && (
         <a
-          href={member.linkedinUrl}
+          href={linkedinUrl}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`LinkedIn de ${member.name}`}

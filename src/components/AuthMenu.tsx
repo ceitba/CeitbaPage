@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { signOut, startGoogleSignIn } from '../store/authStore'
+import { safeHttpUrl } from '../utils/url'
 
 // Renders one of three states in the navbar slot:
 //   loading  -> nothing (avoid flicker before /me resolves)
@@ -50,6 +51,7 @@ export default function AuthMenu() {
     .slice(0, 2)
     .join('')
     .toUpperCase()
+  const avatarUrl = safeHttpUrl(profile.avatarUrl)
 
   return (
     <div className="relative" ref={ref}>
@@ -60,8 +62,8 @@ export default function AuthMenu() {
         aria-expanded={open}
         className="w-9 h-9 rounded-full overflow-hidden border border-border dark:border-[#3f3f46] bg-primary-100 dark:bg-primary-900 flex items-center justify-center hover:border-primary transition-colors duration-150"
       >
-        {profile.avatarUrl ? (
-          <img src={profile.avatarUrl} alt={profile.name ?? profile.email} className="w-full h-full object-cover" />
+        {avatarUrl ? (
+          <img src={avatarUrl} alt={profile.name ?? profile.email} className="w-full h-full object-cover" />
         ) : (
           <span className="font-display font-bold text-label text-primary">{initials}</span>
         )}

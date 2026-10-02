@@ -4,6 +4,7 @@ import { useBenefitCards, useBenefits } from '../../hooks/useContent'
 import type { BenefitCard, BenefitEntry } from '../../api/content'
 import LoadError from '../../components/LoadError'
 import { benefitCategoryName } from '../../utils/benefits'
+import { safeHttpUrl, safeLinkUrl } from '../../utils/url'
 
 const ALL = '__all__'
 
@@ -174,16 +175,18 @@ function BenefitCardView({
   const bullets = lang === 'es' ? card.bulletsEs : card.bulletsEn
   const ctaLabel = lang === 'es' ? card.ctaLabelEs : card.ctaLabelEn
   const categoryLabel = benefitCategoryName(card.categorySlug, category, lang, t)
+  const imageUrl = safeHttpUrl(card.imageUrl)
+  const ctaUrl = safeLinkUrl(card.ctaUrl)
 
   return (
     <article
       className="flex flex-col rounded-card border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] shadow-card hover:shadow-card-hover transition-shadow duration-200 overflow-hidden animate-slide-up"
       style={{ animationDelay: `${animationDelay}ms` }}
     >
-      {card.imageUrl && (
+      {imageUrl && (
         <div className="w-full aspect-[16/9] bg-page-bg dark:bg-[#18181b] overflow-hidden">
           <img
-            src={card.imageUrl}
+            src={imageUrl}
             alt={title}
             loading="lazy"
             className="w-full h-full object-cover"
@@ -228,9 +231,9 @@ function BenefitCardView({
           </ul>
         )}
 
-        {card.ctaUrl && (
+        {ctaUrl && (
           <a
-            href={card.ctaUrl}
+            href={ctaUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-auto inline-flex items-center gap-1.5 font-mono text-label uppercase tracking-widest text-primary font-bold self-start"
