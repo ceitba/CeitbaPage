@@ -8,6 +8,7 @@ import { safeHttpUrl } from '../../utils/url'
 const PLACEHOLDER_COUNT = 8
 
 function MemberCard({ member, lang }: { member: StaffMember; lang: 'es' | 'en' }) {
+  const { t } = useTranslation()
   const initials = member.name
     .split(' ')
     .map(n => n[0])
@@ -43,7 +44,7 @@ function MemberCard({ member, lang }: { member: StaffMember; lang: 'es' | 'en' }
           href={linkedinUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`LinkedIn de ${member.name}`}
+          aria-label={t('staff.linkedinAria', { name: member.name })}
           className="text-ink-secondary dark:text-[#a1a1aa] hover:text-primary transition-colors duration-150"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

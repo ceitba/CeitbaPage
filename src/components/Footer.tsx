@@ -69,7 +69,7 @@ export default function Footer() {
           </div>
 
           {/* Text links */}
-          <nav className="flex items-center gap-6" aria-label="Footer">
+          <nav className="flex items-center gap-6" aria-label={t('footer.navAria')}>
             <a
               href="https://github.com/ceitba"
               target="_blank"

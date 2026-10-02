@@ -15,7 +15,7 @@ export default function TabBar({ active, onChange }: TabBarProps) {
   return (
     <div className="border-b border-border dark:border-[#3f3f46] bg-surface dark:bg-[#18181b] sticky top-16 z-30">
       <div className="container-content">
-        <nav className="flex gap-0 overflow-x-auto scrollbar-none" aria-label="Page sections" role="tablist">
+        <nav className="flex gap-0 overflow-x-auto scrollbar-none" aria-label={t('tabs.aria')} role="tablist">
           {TABS.map((tab) => (
             <button
               key={tab}

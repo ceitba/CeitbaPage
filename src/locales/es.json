@@ -12,7 +12,8 @@
     "home": "Inicio",
     "departments": "Departamentos",
     "benefits": "Beneficios",
-    "staff": "Staff"
+    "staff": "Staff",
+    "aria": "Secciones de la página"
   },
   "manage": {
     "title": "Administrar",
@@ -41,7 +42,12 @@
         "order": "Orden",
         "department": "Departamento"
       },
-      "deleteBody": "{{name}} se va a eliminar del staff {{year}}. Esta acción no se puede deshacer."
+      "deleteBody": "{{name}} se va a eliminar del staff {{year}}. Esta acción no se puede deshacer.",
+      "roleEs": "Rol (ES)",
+      "roleEn": "Rol (EN)",
+      "email": "Email",
+      "photoUrl": "URL de foto",
+      "linkedinUrl": "URL de LinkedIn"
     },
     "benefits": {
       "tabs": {
@@ -81,7 +87,8 @@
           "order": "Orden"
         },
         "deleteBody": "La tarjeta «{{title}}» se va a eliminar. Esta acción no se puede deshacer."
-      }
+      },
+      "tabsAria": "Administrar beneficios"
     },
     "users": {
       "col": {
@@ -110,7 +117,8 @@
       "removeOrgTitle": "¿Quitar de la organización?",
       "removeOrgBody": "{{name}} va a dejar de ser miembro de {{org}}. Podés volver a agregarlo más adelante.",
       "removeOrgConfirm": "Quitar"
-    }
+    },
+    "tabsAria": "Secciones de administración"
   },
   "profile": {
     "title": "Mi perfil",
@@ -243,13 +251,15 @@
     "sectionSubtitle": "Las personas detrás del CEITBA.",
     "comingSoon": "Próximamente",
     "comingSoonMessage": "Estamos trabajando para presentarte al equipo completo. ¡Volvé pronto!",
-    "yearLabel": "Filtrar por año"
+    "yearLabel": "Filtrar por año",
+    "linkedinAria": "LinkedIn de {{name}}"
   },
   "footer": {
     "itTeam": "IT Team CEITBA",
     "github": "GitHub",
     "contact": "Contacto",
-    "rights": "Todos los derechos reservados."
+    "rights": "Todos los derechos reservados.",
+    "navAria": "Enlaces del pie de página"
   },
   "errors": {
     "somethingWrong": "Algo salió mal",

@@ -235,7 +235,7 @@ function MemberEditor({ draft, departments, busy, onChange, onSave, onCancel }: 
     >
       <Field label={t('manage.staff.col.name')} value={draft.name} onChange={(v) => onChange({ ...draft, name: v })} />
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Año" type="number" value={String(draft.year)} onChange={(v) => onChange({ ...draft, year: Number(v) })} />
+        <Field label={t('manage.staff.year')} type="number" value={String(draft.year)} onChange={(v) => onChange({ ...draft, year: Number(v) })} />
         <SelectField
           label={t('manage.staff.col.department')}
           value={draft.departmentSlug}
@@ -244,15 +244,15 @@ function MemberEditor({ draft, departments, busy, onChange, onSave, onCancel }: 
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Role (ES)" value={draft.roleEs} onChange={(v) => onChange({ ...draft, roleEs: v })} />
-        <Field label="Role (EN)" value={draft.roleEn} onChange={(v) => onChange({ ...draft, roleEn: v })} />
+        <Field label={t('manage.staff.roleEs')} value={draft.roleEs} onChange={(v) => onChange({ ...draft, roleEs: v })} />
+        <Field label={t('manage.staff.roleEn')} value={draft.roleEn} onChange={(v) => onChange({ ...draft, roleEn: v })} />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <Field label={t('manage.staff.col.order')} type="number" value={String(draft.displayOrder)} onChange={(v) => onChange({ ...draft, displayOrder: Number(v) })} />
-        <Field label="Email" value={draft.email ?? ''} onChange={(v) => onChange({ ...draft, email: v || null })} />
+        <Field label={t('manage.staff.email')} value={draft.email ?? ''} onChange={(v) => onChange({ ...draft, email: v || null })} />
       </div>
-      <Field label="Photo URL" value={draft.photoUrl ?? ''} onChange={(v) => onChange({ ...draft, photoUrl: v || null })} />
-      <Field label="LinkedIn URL" value={draft.linkedinUrl ?? ''} onChange={(v) => onChange({ ...draft, linkedinUrl: v || null })} />
+      <Field label={t('manage.staff.photoUrl')} value={draft.photoUrl ?? ''} onChange={(v) => onChange({ ...draft, photoUrl: v || null })} />
+      <Field label={t('manage.staff.linkedinUrl')} value={draft.linkedinUrl ?? ''} onChange={(v) => onChange({ ...draft, linkedinUrl: v || null })} />
     </Modal>
   )
 }

@@ -39,7 +39,7 @@ export default function ManageBenefitsSection() {
 
   return (
     <div className="flex flex-col gap-4">
-      <nav className="flex gap-2 border-b border-border dark:border-[#3f3f46]" aria-label="Manage benefits">
+      <nav className="flex gap-2 border-b border-border dark:border-[#3f3f46]" aria-label={t('manage.benefits.tabsAria')}>
         {(['cards', 'categories'] as Tab[]).map((id) => (
           <button
             key={id}

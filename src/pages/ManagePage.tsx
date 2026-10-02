@@ -27,7 +27,7 @@ export default function ManagePage() {
         </p>
       </header>
 
-      <nav className="flex gap-2 border-b border-border dark:border-[#3f3f46] mb-6" aria-label="Manage sections">
+      <nav className="flex gap-2 border-b border-border dark:border-[#3f3f46] mb-6" aria-label={t('manage.tabsAria')}>
         {tabs.map((it) => (
           <button
             key={it.id}
