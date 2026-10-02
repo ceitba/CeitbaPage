@@ -7,7 +7,7 @@ export default function LoadError({ onRetry }: { onRetry: () => void }) {
   return (
     <div
       role="alert"
-      className="flex flex-col items-center gap-3 py-12 px-6 rounded-card border border-dashed border-border dark:border-[#3f3f46] text-center"
+      className="flex flex-col items-center gap-3 py-12 px-6 rounded-card border border-dashed border-border dark:border-night-border text-center"
     >
       <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/40 flex items-center justify-center text-red-600 dark:text-red-300" aria-hidden="true">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -16,7 +16,7 @@ export default function LoadError({ onRetry }: { onRetry: () => void }) {
           <line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2.5" />
         </svg>
       </div>
-      <p className="font-body text-body-sm text-ink-secondary dark:text-[#a1a1aa]">
+      <p className="font-body text-body-sm text-ink-secondary dark:text-night-muted">
         {t('errors.somethingWrong')}
       </p>
       <button

@@ -114,13 +114,13 @@ export default function ManageStaffSection() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center gap-3">
-        <label className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa]">
+        <label className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted">
           {t('manage.staff.year')}
         </label>
         <select
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
-          className="px-3 py-1.5 font-body text-body-sm rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a]"
+          className="px-3 py-1.5 font-body text-body-sm rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface"
         >
           {(years.length > 0 ? years : [year]).map((y) => (
             <option key={y} value={y}>{y}</option>
@@ -141,12 +141,12 @@ export default function ManageStaffSection() {
 
       {Array.from(grouped.entries()).map(([deptSlug, list]) => (
         <section key={deptSlug}>
-          <h3 className="font-display font-bold text-h5 text-ink-primary dark:text-[#f4f4f5] mb-3">
+          <h3 className="font-display font-bold text-h5 text-ink-primary dark:text-night-text mb-3">
             {t(`departments.${deptSlug}.name`, { defaultValue: deptSlug })}
           </h3>
-          <div className="overflow-x-auto rounded-card border border-border dark:border-[#3f3f46]">
+          <div className="overflow-x-auto rounded-card border border-border dark:border-night-border">
             <table className="w-full font-body text-body-sm">
-              <thead className="bg-page-bg dark:bg-[#18181b]">
+              <thead className="bg-page-bg dark:bg-night-bg">
                 <tr className="text-left">
                   <th className="px-3 py-2 font-mono text-label uppercase tracking-widest">{t('manage.staff.col.name')}</th>
                   <th className="px-3 py-2 font-mono text-label uppercase tracking-widest">{t('manage.staff.col.role')}</th>
@@ -156,7 +156,7 @@ export default function ManageStaffSection() {
               </thead>
               <tbody>
                 {list.map((m) => (
-                  <tr key={m.id} className="border-t border-border dark:border-[#3f3f46]">
+                  <tr key={m.id} className="border-t border-border dark:border-night-border">
                     <td className="px-3 py-2">{m.name}</td>
                     <td className="px-3 py-2">{m.roleEs} / {m.roleEn}</td>
                     <td className="px-3 py-2">{m.displayOrder}</td>
@@ -167,7 +167,7 @@ export default function ManageStaffSection() {
                   </tr>
                 ))}
                 {list.length === 0 && (
-                  <tr><td colSpan={4} className="px-3 py-6 text-center text-ink-secondary dark:text-[#a1a1aa]">{t('manage.empty')}</td></tr>
+                  <tr><td colSpan={4} className="px-3 py-6 text-center text-ink-secondary dark:text-night-muted">{t('manage.empty')}</td></tr>
                 )}
               </tbody>
             </table>
@@ -176,11 +176,11 @@ export default function ManageStaffSection() {
       ))}
 
       {loadingMembers && grouped.size === 0 && (
-        <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.loading')}</p>
+        <p className="text-ink-secondary dark:text-night-muted font-body text-body-sm">{t('manage.loading')}</p>
       )}
 
       {!loadingMembers && !error && grouped.size === 0 && (
-        <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.staff.noneForYear')}</p>
+        <p className="text-ink-secondary dark:text-night-muted font-body text-body-sm">{t('manage.staff.noneForYear')}</p>
       )}
 
       {editing && (
@@ -227,7 +227,7 @@ function MemberEditor({ draft, departments, busy, onChange, onSave, onCancel }: 
       size="lg"
       footer={
         <>
-          <button type="button" disabled={busy} onClick={onCancel} className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa] disabled:opacity-50">{t('manage.cancel')}</button>
+          <button type="button" disabled={busy} onClick={onCancel} className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted disabled:opacity-50">{t('manage.cancel')}</button>
           <button type="button" disabled={busy} onClick={onSave} className="px-3 py-1.5 rounded-sm bg-primary text-white font-mono text-label uppercase tracking-widest disabled:opacity-50">
             {busy ? '…' : t('manage.save')}
           </button>
@@ -261,12 +261,12 @@ function MemberEditor({ draft, departments, busy, onChange, onSave, onCancel }: 
 function Field({ label, value, onChange, type = 'text' }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa]">{label}</span>
+      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted">{label}</span>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="px-3 py-1.5 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
+        className="px-3 py-1.5 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm"
       />
     </label>
   )
@@ -275,11 +275,11 @@ function Field({ label, value, onChange, type = 'text' }: { label: string; value
 function SelectField({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (v: string) => void }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa]">{label}</span>
+      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="px-3 py-1.5 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
+        className="px-3 py-1.5 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm"
       >
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>

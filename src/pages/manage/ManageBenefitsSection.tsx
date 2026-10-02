@@ -40,7 +40,7 @@ export default function ManageBenefitsSection() {
 
   return (
     <div className="flex flex-col gap-4">
-      <nav className="flex gap-2 border-b border-border dark:border-[#3f3f46]" aria-label={t('manage.benefits.tabsAria')}>
+      <nav className="flex gap-2 border-b border-border dark:border-night-border" aria-label={t('manage.benefits.tabsAria')}>
         {(['cards', 'categories'] as Tab[]).map((id) => (
           <button
             key={id}
@@ -48,7 +48,7 @@ export default function ManageBenefitsSection() {
             onClick={() => setTab(id)}
             aria-current={tab === id ? 'page' : undefined}
             className={`px-3 py-1.5 font-mono text-label uppercase tracking-widest transition-colors duration-150 -mb-px border-b-2 ${
-              tab === id ? 'border-primary text-primary' : 'border-transparent text-ink-secondary dark:text-[#a1a1aa] hover:text-primary'
+              tab === id ? 'border-primary text-primary' : 'border-transparent text-ink-secondary dark:text-night-muted hover:text-primary'
             }`}
           >
             {t(`manage.benefits.tabs.${id}`)}
@@ -140,13 +140,13 @@ function CardsTab() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
-        <label className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa]">
+        <label className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted">
           {t('manage.benefits.cards.filter')}
         </label>
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="px-3 py-1.5 font-body text-body-sm rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a]"
+          className="px-3 py-1.5 font-body text-body-sm rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface"
         >
           <option value="">{t('manage.benefits.cards.allCategories')}</option>
           {cats.map((c) => (
@@ -168,13 +168,13 @@ function CardsTab() {
       )}
 
       {(loading || catLoading) ? (
-        <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.loading')}</p>
+        <p className="text-ink-secondary dark:text-night-muted font-body text-body-sm">{t('manage.loading')}</p>
       ) : visible.length === 0 ? (
-        <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.benefits.cards.empty')}</p>
+        <p className="text-ink-secondary dark:text-night-muted font-body text-body-sm">{t('manage.benefits.cards.empty')}</p>
       ) : (
-        <div className="overflow-x-auto rounded-card border border-border dark:border-[#3f3f46]">
+        <div className="overflow-x-auto rounded-card border border-border dark:border-night-border">
           <table className="w-full font-body text-body-sm">
-            <thead className="bg-page-bg dark:bg-[#18181b]">
+            <thead className="bg-page-bg dark:bg-night-bg">
               <tr className="text-left">
                 <th className="px-3 py-2 font-mono text-label uppercase tracking-widest">{t('manage.benefits.cards.col.title')}</th>
                 <th className="px-3 py-2 font-mono text-label uppercase tracking-widest">{t('manage.benefits.cards.col.category')}</th>
@@ -185,7 +185,7 @@ function CardsTab() {
             </thead>
             <tbody>
               {visible.map((c) => (
-                <tr key={c.id} className="border-t border-border dark:border-[#3f3f46]">
+                <tr key={c.id} className="border-t border-border dark:border-night-border">
                   <td className="px-3 py-2">{c.titleEs} <span className="text-ink-secondary">/</span> {c.titleEn}</td>
                   <td className="px-3 py-2">{c.categorySlug}</td>
                   <td className="px-3 py-2">{c.price ?? '—'}</td>
@@ -245,7 +245,7 @@ function CardEditor({ draft, categories, busy, onChange, onSave, onCancel }: Edi
       size="2xl"
       footer={
         <>
-          <button type="button" disabled={busy} onClick={onCancel} className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa] disabled:opacity-50">
+          <button type="button" disabled={busy} onClick={onCancel} className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted disabled:opacity-50">
             {t('manage.cancel')}
           </button>
           <button
@@ -337,7 +337,7 @@ function CategoriesTab() {
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  if (loading && !data) return <p className="text-ink-secondary dark:text-[#a1a1aa] font-body text-body-sm">{t('manage.loading')}</p>
+  if (loading && !data) return <p className="text-ink-secondary dark:text-night-muted font-body text-body-sm">{t('manage.loading')}</p>
   const categories = data ?? []
 
   function draftFor(b: BenefitEntry): BenefitEntry {
@@ -370,7 +370,7 @@ function CategoriesTab() {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="font-body text-body-sm text-ink-secondary dark:text-[#a1a1aa]">
+      <p className="font-body text-body-sm text-ink-secondary dark:text-night-muted">
         {t('manage.benefits.categories.help')}
       </p>
 
@@ -380,9 +380,9 @@ function CategoriesTab() {
         const d = draftFor(b)
         const dirty = drafts[b.slug] != null
         return (
-          <article key={b.slug} className="p-4 rounded-card border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] flex flex-col gap-3">
+          <article key={b.slug} className="p-4 rounded-card border border-border dark:border-night-border bg-white dark:bg-night-surface flex flex-col gap-3">
             <header className="flex items-center justify-between">
-              <h3 className="font-display font-bold text-h5 text-ink-primary dark:text-[#f4f4f5]">
+              <h3 className="font-display font-bold text-h5 text-ink-primary dark:text-night-text">
                 {benefitCategoryName(b.slug, b, lang, t)}
               </h3>
               <span className="font-mono text-label uppercase tracking-widest text-ink-secondary">{b.slug}</span>
@@ -427,12 +427,12 @@ function splitLines(v: string): string[] {
 function Field({ label, value, onChange, type = 'text' }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa]">{label}</span>
+      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted">{label}</span>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="px-3 py-1.5 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
+        className="px-3 py-1.5 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm"
       />
     </label>
   )
@@ -441,12 +441,12 @@ function Field({ label, value, onChange, type = 'text' }: { label: string; value
 function TextArea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa]">{label}</span>
+      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted">{label}</span>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={3}
-        className="px-3 py-2 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm resize-y"
+        className="px-3 py-2 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm resize-y"
       />
     </label>
   )
@@ -455,11 +455,11 @@ function TextArea({ label, value, onChange }: { label: string; value: string; on
 function SelectField({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (v: string) => void }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa]">{label}</span>
+      <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="px-3 py-1.5 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
+        className="px-3 py-1.5 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm"
       >
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>

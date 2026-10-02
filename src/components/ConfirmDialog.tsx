@@ -42,7 +42,7 @@ export default function ConfirmDialog({
             type="button"
             disabled={busy}
             onClick={onCancel}
-            className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa] disabled:opacity-50"
+            className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted disabled:opacity-50"
           >
             {cancelLabel ?? t('manage.cancel')}
           </button>
@@ -59,7 +59,7 @@ export default function ConfirmDialog({
         </>
       }
     >
-      <p className="font-body text-body-sm text-ink-secondary dark:text-[#a1a1aa]">{body}</p>
+      <p className="font-body text-body-sm text-ink-secondary dark:text-night-muted">{body}</p>
     </Modal>
   )
 }

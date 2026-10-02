@@ -180,12 +180,12 @@ export default function ManageUsersSection() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t('manage.users.searchPlaceholder')}
-          className="flex-1 min-w-[200px] px-3 py-2 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm focus:outline-none focus:border-primary"
+          className="flex-1 min-w-[200px] px-3 py-2 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm focus:outline-none focus:border-primary"
         />
         <select
           value={sort}
           onChange={(e) => { setSort(e.target.value as SortKey); setPageNum(1) }}
-          className="px-3 py-2 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
+          className="px-3 py-2 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm"
         >
           <option value="newest">{t('manage.users.sort.newest')}</option>
           <option value="oldest">{t('manage.users.sort.oldest')}</option>
@@ -193,16 +193,16 @@ export default function ManageUsersSection() {
         <select
           value={orgSlug}
           onChange={(e) => { setOrgSlug(e.target.value); setPageNum(1) }}
-          className="px-3 py-2 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
+          className="px-3 py-2 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm"
         >
           <option value="">{t('manage.users.filterAllOrgs')}</option>
           {orgs.map((o) => <option key={o.slug} value={o.slug}>{o.name ?? o.slug}</option>)}
         </select>
       </div>
 
-      <div className="overflow-x-auto rounded-card border border-border dark:border-[#3f3f46]">
+      <div className="overflow-x-auto rounded-card border border-border dark:border-night-border">
         <table className="w-full font-body text-body-sm">
-          <thead className="bg-page-bg dark:bg-[#18181b]">
+          <thead className="bg-page-bg dark:bg-night-bg">
             <tr className="text-left">
               <th className="px-3 py-2 font-mono text-label uppercase tracking-widest">{t('manage.users.col.user')}</th>
               <th className="px-3 py-2 font-mono text-label uppercase tracking-widest">{t('manage.users.col.staff')}</th>
@@ -213,10 +213,10 @@ export default function ManageUsersSection() {
             {users.map((u) => {
               const orgOptions = orgs.filter((o) => !u.organizations.find((m) => m.slug === o.slug))
               return (
-                <tr key={u.id} className="border-t border-border dark:border-[#3f3f46] align-top">
+                <tr key={u.id} className="border-t border-border dark:border-night-border align-top">
                   <td className="px-3 py-3">
-                    <p className="font-semibold text-ink-primary dark:text-[#f4f4f5]">{u.name ?? u.email}</p>
-                    <p className="font-mono text-label text-ink-secondary dark:text-[#a1a1aa]">{u.email}</p>
+                    <p className="font-semibold text-ink-primary dark:text-night-text">{u.name ?? u.email}</p>
+                    <p className="font-mono text-label text-ink-secondary dark:text-night-muted">{u.email}</p>
                   </td>
                   <td className="px-3 py-3">
                     {u.isStaff ? (
@@ -238,7 +238,7 @@ export default function ManageUsersSection() {
                         type="button"
                         disabled={busyId === u.id}
                         onClick={() => makeStaff(u)}
-                        className="px-3 py-1 rounded-sm font-mono text-label uppercase tracking-widest border border-border dark:border-[#3f3f46] hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
+                        className="px-3 py-1 rounded-sm font-mono text-label uppercase tracking-widest border border-border dark:border-night-border hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
                       >
                         {t('manage.users.staffOff')}
                       </button>
@@ -247,7 +247,7 @@ export default function ManageUsersSection() {
                   <td className="px-3 py-3">
                     <div className="flex flex-wrap gap-2 mb-2">
                       {u.organizations.map((m) => (
-                        <span key={m.slug} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border dark:border-[#3f3f46]">
+                        <span key={m.slug} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border dark:border-night-border">
                           {m.slug}
                           <button
                             type="button"
@@ -260,13 +260,13 @@ export default function ManageUsersSection() {
                           </button>
                         </span>
                       ))}
-                      {u.organizations.length === 0 && <span className="text-ink-secondary dark:text-[#a1a1aa]">{t('manage.users.noOrgs')}</span>}
+                      {u.organizations.length === 0 && <span className="text-ink-secondary dark:text-night-muted">{t('manage.users.noOrgs')}</span>}
                     </div>
                     {orgOptions.length > 0 && (
                       <select
                         value=""
                         onChange={(e) => addOrg(u, e.target.value)}
-                        className="px-2 py-1 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
+                        className="px-2 py-1 rounded-sm border border-border dark:border-night-border bg-white dark:bg-night-surface font-body text-body-sm"
                       >
                         <option value="">{t('manage.users.addOrg')}</option>
                         {orgOptions.map((o) => <option key={o.slug} value={o.slug}>{o.slug}</option>)}
@@ -284,7 +284,7 @@ export default function ManageUsersSection() {
       </div>
 
       <div className="flex items-center justify-between gap-2 font-body text-body-sm">
-        <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa]">
+        <span className="font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-night-muted">
           {t('manage.users.pageStatus', { page: pageNum, pages: totalPages, total })}
         </span>
         <div className="flex gap-2">
@@ -292,7 +292,7 @@ export default function ManageUsersSection() {
             type="button"
             disabled={pageNum <= 1 || loading}
             onClick={() => setPageNum((n) => Math.max(1, n - 1))}
-            className="px-3 py-1 rounded-sm border border-border dark:border-[#3f3f46] font-mono text-label uppercase tracking-widest disabled:opacity-40 hover:border-primary hover:text-primary transition-colors"
+            className="px-3 py-1 rounded-sm border border-border dark:border-night-border font-mono text-label uppercase tracking-widest disabled:opacity-40 hover:border-primary hover:text-primary transition-colors"
           >
             {t('manage.users.prev')}
           </button>
@@ -300,7 +300,7 @@ export default function ManageUsersSection() {
             type="button"
             disabled={pageNum >= totalPages || loading}
             onClick={() => setPageNum((n) => Math.min(totalPages, n + 1))}
-            className="px-3 py-1 rounded-sm border border-border dark:border-[#3f3f46] font-mono text-label uppercase tracking-widest disabled:opacity-40 hover:border-primary hover:text-primary transition-colors"
+            className="px-3 py-1 rounded-sm border border-border dark:border-night-border font-mono text-label uppercase tracking-widest disabled:opacity-40 hover:border-primary hover:text-primary transition-colors"
           >
             {t('manage.users.next')}
           </button>

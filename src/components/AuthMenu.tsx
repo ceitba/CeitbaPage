@@ -60,7 +60,7 @@ export default function AuthMenu() {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="w-9 h-9 rounded-full overflow-hidden border border-border dark:border-[#3f3f46] bg-primary-100 dark:bg-primary-900 flex items-center justify-center hover:border-primary transition-colors duration-150"
+        className="w-9 h-9 rounded-full overflow-hidden border border-border dark:border-night-border bg-primary-100 dark:bg-primary-900 flex items-center justify-center hover:border-primary transition-colors duration-150"
       >
         {avatarUrl ? (
           <img src={avatarUrl} alt={profile.name ?? profile.email} className="w-full h-full object-cover" />
@@ -72,13 +72,13 @@ export default function AuthMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#27272a] border border-border dark:border-[#3f3f46] rounded-card shadow-card-hover py-1 z-50"
+          className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-night-surface border border-border dark:border-night-border rounded-card shadow-card-hover py-1 z-50"
         >
-          <div className="px-3 py-2 border-b border-border dark:border-[#3f3f46]">
-            <p className="font-body text-body-sm font-semibold text-ink-primary dark:text-[#f4f4f5] truncate">
+          <div className="px-3 py-2 border-b border-border dark:border-night-border">
+            <p className="font-body text-body-sm font-semibold text-ink-primary dark:text-night-text truncate">
               {profile.name ?? profile.email}
             </p>
-            <p className="font-mono text-label text-ink-secondary dark:text-[#a1a1aa] truncate">
+            <p className="font-mono text-label text-ink-secondary dark:text-night-muted truncate">
               {profile.email}
             </p>
           </div>
@@ -86,7 +86,7 @@ export default function AuthMenu() {
             type="button"
             role="menuitem"
             onClick={() => { setOpen(false); navigate('/profile') }}
-            className="w-full text-left px-3 py-2 font-body text-body-sm text-ink-primary dark:text-[#f4f4f5] hover:bg-primary-50 dark:hover:bg-primary-900"
+            className="w-full text-left px-3 py-2 font-body text-body-sm text-ink-primary dark:text-night-text hover:bg-primary-50 dark:hover:bg-primary-900"
           >
             {t('auth.profile')}
           </button>
@@ -95,7 +95,7 @@ export default function AuthMenu() {
               type="button"
               role="menuitem"
               onClick={() => { setOpen(false); navigate('/manage') }}
-              className="w-full text-left px-3 py-2 font-body text-body-sm text-ink-primary dark:text-[#f4f4f5] hover:bg-primary-50 dark:hover:bg-primary-900"
+              className="w-full text-left px-3 py-2 font-body text-body-sm text-ink-primary dark:text-night-text hover:bg-primary-50 dark:hover:bg-primary-900"
             >
               {t('auth.manage')}
             </button>
@@ -104,7 +104,7 @@ export default function AuthMenu() {
             type="button"
             role="menuitem"
             onClick={async () => { await signOut(); setOpen(false) }}
-            className="w-full text-left px-3 py-2 font-body text-body-sm text-ink-secondary dark:text-[#a1a1aa] hover:bg-primary-50 dark:hover:bg-primary-900"
+            className="w-full text-left px-3 py-2 font-body text-body-sm text-ink-secondary dark:text-night-muted hover:bg-primary-50 dark:hover:bg-primary-900"
           >
             {t('auth.signOut')}
           </button>

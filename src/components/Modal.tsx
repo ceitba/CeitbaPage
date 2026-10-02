@@ -108,9 +108,9 @@ export default function Modal({ title, children, footer, onClose, busy = false, 
           aria-modal="true"
           aria-labelledby={titleId}
           tabIndex={-1}
-          className={`w-full ${WIDTHS[size]} my-8 bg-white dark:bg-[#27272a] rounded-card border border-border dark:border-[#3f3f46] p-6 flex flex-col gap-4 outline-none`}
+          className={`w-full ${WIDTHS[size]} my-8 bg-white dark:bg-night-surface rounded-card border border-border dark:border-night-border p-6 flex flex-col gap-4 outline-none`}
         >
-          <h3 id={titleId} className="font-display font-bold text-h4 text-ink-primary dark:text-[#f4f4f5]">
+          <h3 id={titleId} className="font-display font-bold text-h4 text-ink-primary dark:text-night-text">
             {title}
           </h3>
           {children}
