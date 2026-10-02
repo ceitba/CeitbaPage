@@ -12,6 +12,7 @@ import {
   type OrganizationSummary,
   type UsersPage,
 } from '../../api/admin'
+import { getCachedSession, getSession } from '../../store/authStore'
 
 const STAFF_BRANCH = 'DIRECTIVES'
 const STAFF_ROLE = 'MEMBER'
@@ -116,6 +117,12 @@ export default function ManageUsersSection() {
     try {
       await revokeStaff(u.id)
       setUnassigning(null)
+      // Unassigning yourself: refresh the session so StaffGuard sees the
+      // lost role and leaves /manage instead of showing a dead admin UI.
+      if (u.id === getCachedSession()?.id) {
+        await getSession({ force: true })
+        return
+      }
       reload()
     } catch (e) {
       setUnassigning(null)
