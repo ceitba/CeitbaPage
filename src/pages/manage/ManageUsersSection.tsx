@@ -57,17 +57,15 @@ export default function ManageUsersSection() {
     fetchOrganizations().then(setOrgs).catch(() => setOrgs([]))
   }, [])
 
-  // Debounce the search input.
+  // Debounce the search input. Filter changes reset to page 1 in the same
+  // update (not in a follow-up effect), so we don't first fire a wasted
+  // request for the new filter on the old page.
   useEffect(() => {
-    const id = setTimeout(() => setQ(query.trim()), SEARCH_DEBOUNCE_MS)
+    const next = query.trim()
+    if (next === q) return
+    const id = setTimeout(() => { setQ(next); setPageNum(1) }, SEARCH_DEBOUNCE_MS)
     return () => clearTimeout(id)
-  }, [query])
-
-  // Reset to page 1 whenever filters or sort change so the user doesn't end
-  // up looking at "page 5" of a 1-page result set.
-  useEffect(() => {
-    setPageNum(1)
-  }, [q, sort, orgSlug])
+  }, [query, q])
 
   const params = useMemo<FetchUsersParams>(() => ({
     page: pageNum,
@@ -85,6 +83,10 @@ export default function ManageUsersSection() {
         if (reqIdRef.current !== id) return
         setPage(res)
         setError(null)
+        // The result set can shrink under us (e.g. the last user on the last
+        // page was removed from the filtered org): clamp to the last page.
+        const lastPage = Math.max(1, Math.ceil(res.meta.total / PAGE_SIZE))
+        if ((params.page ?? 1) > lastPage) setPageNum(lastPage)
       })
       .catch((e: Error) => {
         if (reqIdRef.current !== id) return
@@ -181,7 +183,7 @@ export default function ManageUsersSection() {
         />
         <select
           value={sort}
-          onChange={(e) => setSort(e.target.value as SortKey)}
+          onChange={(e) => { setSort(e.target.value as SortKey); setPageNum(1) }}
           className="px-3 py-2 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
         >
           <option value="newest">{t('manage.users.sort.newest')}</option>
@@ -189,7 +191,7 @@ export default function ManageUsersSection() {
         </select>
         <select
           value={orgSlug}
-          onChange={(e) => setOrgSlug(e.target.value)}
+          onChange={(e) => { setOrgSlug(e.target.value); setPageNum(1) }}
           className="px-3 py-2 rounded-sm border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] font-body text-body-sm"
         >
           <option value="">{t('manage.users.filterAllOrgs')}</option>
