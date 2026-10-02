@@ -10,6 +10,7 @@ import {
 } from '../../api/content'
 import { useDepartments } from '../../hooks/useContent'
 import ConfirmDialog from '../../components/ConfirmDialog'
+import ErrorBanner from '../../components/ErrorBanner'
 import Modal from '../../components/Modal'
 
 const NEW_MEMBER: Omit<StaffMember, 'id'> = {
@@ -135,7 +136,7 @@ export default function ManageStaffSection() {
       </div>
 
       {error && (
-        <p className="px-3 py-2 rounded-sm bg-red-50 text-red-700 font-body text-body-sm border border-red-200">{error}</p>
+        <ErrorBanner onDismiss={() => setError(null)}>{error}</ErrorBanner>
       )}
 
       {Array.from(grouped.entries()).map(([deptSlug, list]) => (

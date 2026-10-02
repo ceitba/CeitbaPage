@@ -14,6 +14,7 @@ import {
 } from '../../api/admin'
 import { getCachedSession, getSession } from '../../store/authStore'
 import ConfirmDialog from '../../components/ConfirmDialog'
+import ErrorBanner from '../../components/ErrorBanner'
 
 const STAFF_BRANCH = 'DIRECTIVES'
 const STAFF_ROLE = 'MEMBER'
@@ -171,7 +172,7 @@ export default function ManageUsersSection() {
 
   return (
     <div className="flex flex-col gap-4">
-      {error && <p className="px-3 py-2 rounded-sm bg-red-50 text-red-700 font-body text-body-sm border border-red-200">{error}</p>}
+      {error && <ErrorBanner onDismiss={() => setError(null)}>{error}</ErrorBanner>}
 
       <div className="flex flex-wrap items-center gap-2">
         <input
@@ -227,7 +228,7 @@ export default function ManageUsersSection() {
                           type="button"
                           disabled={busyId === u.id}
                           onClick={() => setUnassigning(u)}
-                          className="text-red-600 font-mono text-label uppercase tracking-widest hover:underline disabled:opacity-50"
+                          className="text-red-600 dark:text-red-400 font-mono text-label uppercase tracking-widest hover:underline disabled:opacity-50"
                         >
                           {t('manage.users.unassign')}
                         </button>

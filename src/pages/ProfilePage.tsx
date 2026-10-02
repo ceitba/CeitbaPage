@@ -6,6 +6,7 @@ import { useThemeContext } from '../context/ThemeContext'
 import { fetchCareersWithPlans, fetchMyProfile, patchMyProfile, type CareerWithPlans, type MeProfile } from '../api/profile'
 import { getSession } from '../store/authStore'
 import { safeHttpUrl } from '../utils/url'
+import ErrorBanner from '../components/ErrorBanner'
 
 export default function ProfilePage() {
   const { t, i18n } = useTranslation()
@@ -74,9 +75,7 @@ export default function ProfilePage() {
       </header>
 
       {error && (
-        <p className="mb-6 px-3 py-2 rounded-sm bg-red-50 text-red-700 font-body text-body-sm border border-red-200">
-          {error}
-        </p>
+        <ErrorBanner className="mb-6" onDismiss={() => setError(null)}>{error}</ErrorBanner>
       )}
 
       <section className="mb-8 p-5 rounded-card border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] flex items-center gap-4">

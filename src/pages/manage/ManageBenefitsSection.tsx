@@ -12,6 +12,7 @@ import {
 import { useBenefits } from '../../hooks/useContent'
 import { benefitCategoryName } from '../../utils/benefits'
 import ConfirmDialog from '../../components/ConfirmDialog'
+import ErrorBanner from '../../components/ErrorBanner'
 import Modal from '../../components/Modal'
 
 type Tab = 'cards' | 'categories'
@@ -163,7 +164,7 @@ function CardsTab() {
       </div>
 
       {error && (
-        <p className="px-3 py-2 rounded-sm bg-red-50 text-red-700 font-body text-body-sm border border-red-200">{error}</p>
+        <ErrorBanner onDismiss={() => setError(null)}>{error}</ErrorBanner>
       )}
 
       {(loading || catLoading) ? (
@@ -373,7 +374,7 @@ function CategoriesTab() {
         {t('manage.benefits.categories.help')}
       </p>
 
-      {error && <p className="px-3 py-2 rounded-sm bg-red-50 text-red-700 font-body text-body-sm border border-red-200">{error}</p>}
+      {error && <ErrorBanner onDismiss={() => setError(null)}>{error}</ErrorBanner>}
 
       {categories.map((b) => {
         const d = draftFor(b)
@@ -381,7 +382,7 @@ function CategoriesTab() {
         return (
           <article key={b.slug} className="p-4 rounded-card border border-border dark:border-[#3f3f46] bg-white dark:bg-[#27272a] flex flex-col gap-3">
             <header className="flex items-center justify-between">
-              <h3 className="font-display font-bold text-h5">
+              <h3 className="font-display font-bold text-h5 text-ink-primary dark:text-[#f4f4f5]">
                 {benefitCategoryName(b.slug, b, lang, t)}
               </h3>
               <span className="font-mono text-label uppercase tracking-widest text-ink-secondary">{b.slug}</span>
