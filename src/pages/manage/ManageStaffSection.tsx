@@ -9,6 +9,8 @@ import {
   type StaffMember,
 } from '../../api/content'
 import { useDepartments } from '../../hooks/useContent'
+import ConfirmDialog from '../../components/ConfirmDialog'
+import Modal from '../../components/Modal'
 
 const NEW_MEMBER: Omit<StaffMember, 'id'> = {
   year: new Date().getFullYear(),
@@ -33,6 +35,7 @@ export default function ManageStaffSection() {
   const [editing, setEditing] = useState<Draft | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [deleting, setDeleting] = useState<StaffMember | null>(null)
   const [loadingMembers, setLoadingMembers] = useState(true)
   // Only the latest roster request may write state: switching years quickly
   // must not let an older year's response land last (Edit/Delete would then
@@ -92,14 +95,18 @@ export default function ManageStaffSection() {
     }
   }
 
-  async function remove(id: string) {
-    if (!confirm(t('manage.staff.confirmDelete'))) return
-    setError(null)
+  async function confirmRemove() {
+    if (!deleting) return
+    setError(null); setBusy(true)
     try {
-      await deleteStaffMember(id)
+      await deleteStaffMember(deleting.id)
+      setDeleting(null)
       reloadMembers()
     } catch (e) {
+      setDeleting(null)
       setError((e as Error).message)
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -153,8 +160,8 @@ export default function ManageStaffSection() {
                     <td className="px-3 py-2">{m.roleEs} / {m.roleEn}</td>
                     <td className="px-3 py-2">{m.displayOrder}</td>
                     <td className="px-3 py-2 flex gap-2 justify-end">
-                      <button onClick={() => setEditing(m)} className="text-primary font-mono text-label uppercase tracking-widest">{t('manage.edit')}</button>
-                      <button onClick={() => remove(m.id)} className="text-red-600 font-mono text-label uppercase tracking-widest">{t('manage.delete')}</button>
+                      <button type="button" onClick={() => setEditing(m)} className="text-primary font-mono text-label uppercase tracking-widest">{t('manage.edit')}</button>
+                      <button type="button" onClick={() => setDeleting(m)} className="text-red-600 dark:text-red-400 font-mono text-label uppercase tracking-widest">{t('manage.delete')}</button>
                     </td>
                   </tr>
                 ))}
@@ -185,6 +192,17 @@ export default function ManageStaffSection() {
           onCancel={() => setEditing(null)}
         />
       )}
+
+      {deleting && (
+        <ConfirmDialog
+          title={t('manage.staff.confirmDelete')}
+          body={t('manage.staff.deleteBody', { name: deleting.name, year: deleting.year })}
+          confirmLabel={t('manage.delete')}
+          busy={busy}
+          onConfirm={confirmRemove}
+          onCancel={() => setDeleting(null)}
+        />
+      )}
     </div>
   )
 }
@@ -201,37 +219,41 @@ interface EditorProps {
 function MemberEditor({ draft, departments, busy, onChange, onSave, onCancel }: EditorProps) {
   const { t } = useTranslation()
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-      <div className="w-full max-w-lg bg-white dark:bg-[#27272a] rounded-card border border-border dark:border-[#3f3f46] p-6 flex flex-col gap-4">
-        <h3 className="font-display font-bold text-h4">{draft.id ? t('manage.staff.editTitle') : t('manage.staff.addTitle')}</h3>
-        <Field label={t('manage.staff.col.name')} value={draft.name} onChange={(v) => onChange({ ...draft, name: v })} />
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Año" type="number" value={String(draft.year)} onChange={(v) => onChange({ ...draft, year: Number(v) })} />
-          <SelectField
-            label={t('manage.staff.col.department')}
-            value={draft.departmentSlug}
-            options={departments.map((d) => ({ value: d.slug, label: d.slug }))}
-            onChange={(v) => onChange({ ...draft, departmentSlug: v })}
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Role (ES)" value={draft.roleEs} onChange={(v) => onChange({ ...draft, roleEs: v })} />
-          <Field label="Role (EN)" value={draft.roleEn} onChange={(v) => onChange({ ...draft, roleEn: v })} />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label={t('manage.staff.col.order')} type="number" value={String(draft.displayOrder)} onChange={(v) => onChange({ ...draft, displayOrder: Number(v) })} />
-          <Field label="Email" value={draft.email ?? ''} onChange={(v) => onChange({ ...draft, email: v || null })} />
-        </div>
-        <Field label="Photo URL" value={draft.photoUrl ?? ''} onChange={(v) => onChange({ ...draft, photoUrl: v || null })} />
-        <Field label="LinkedIn URL" value={draft.linkedinUrl ?? ''} onChange={(v) => onChange({ ...draft, linkedinUrl: v || null })} />
-        <div className="flex justify-end gap-2 pt-2">
-          <button type="button" onClick={onCancel} className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary">{t('manage.cancel')}</button>
+    <Modal
+      title={draft.id ? t('manage.staff.editTitle') : t('manage.staff.addTitle')}
+      onClose={onCancel}
+      busy={busy}
+      size="lg"
+      footer={
+        <>
+          <button type="button" disabled={busy} onClick={onCancel} className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa] disabled:opacity-50">{t('manage.cancel')}</button>
           <button type="button" disabled={busy} onClick={onSave} className="px-3 py-1.5 rounded-sm bg-primary text-white font-mono text-label uppercase tracking-widest disabled:opacity-50">
             {busy ? '…' : t('manage.save')}
           </button>
-        </div>
+        </>
+      }
+    >
+      <Field label={t('manage.staff.col.name')} value={draft.name} onChange={(v) => onChange({ ...draft, name: v })} />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Año" type="number" value={String(draft.year)} onChange={(v) => onChange({ ...draft, year: Number(v) })} />
+        <SelectField
+          label={t('manage.staff.col.department')}
+          value={draft.departmentSlug}
+          options={departments.map((d) => ({ value: d.slug, label: d.slug }))}
+          onChange={(v) => onChange({ ...draft, departmentSlug: v })}
+        />
       </div>
-    </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Role (ES)" value={draft.roleEs} onChange={(v) => onChange({ ...draft, roleEs: v })} />
+        <Field label="Role (EN)" value={draft.roleEn} onChange={(v) => onChange({ ...draft, roleEn: v })} />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t('manage.staff.col.order')} type="number" value={String(draft.displayOrder)} onChange={(v) => onChange({ ...draft, displayOrder: Number(v) })} />
+        <Field label="Email" value={draft.email ?? ''} onChange={(v) => onChange({ ...draft, email: v || null })} />
+      </div>
+      <Field label="Photo URL" value={draft.photoUrl ?? ''} onChange={(v) => onChange({ ...draft, photoUrl: v || null })} />
+      <Field label="LinkedIn URL" value={draft.linkedinUrl ?? ''} onChange={(v) => onChange({ ...draft, linkedinUrl: v || null })} />
+    </Modal>
   )
 }
 

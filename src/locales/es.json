@@ -40,7 +40,8 @@
         "role": "Rol",
         "order": "Orden",
         "department": "Departamento"
-      }
+      },
+      "deleteBody": "{{name}} se va a eliminar del staff {{year}}. Esta acción no se puede deshacer."
     },
     "benefits": {
       "tabs": {
@@ -78,7 +79,8 @@
           "category": "Categoría",
           "price": "Precio",
           "order": "Orden"
-        }
+        },
+        "deleteBody": "La tarjeta «{{title}}» se va a eliminar. Esta acción no se puede deshacer."
       }
     },
     "users": {
@@ -103,7 +105,11 @@
       "filterAllOrgs": "Todas las organizaciones",
       "pageStatus": "Página {{page}} de {{pages}} · {{total}} usuarios",
       "prev": "‹ Anterior",
-      "next": "Siguiente ›"
+      "next": "Siguiente ›",
+      "removeOrgAria": "Quitar a {{name}} de {{org}}",
+      "removeOrgTitle": "¿Quitar de la organización?",
+      "removeOrgBody": "{{name}} va a dejar de ser miembro de {{org}}. Podés volver a agregarlo más adelante.",
+      "removeOrgConfirm": "Quitar"
     }
   },
   "profile": {

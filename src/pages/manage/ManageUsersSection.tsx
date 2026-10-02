@@ -13,6 +13,7 @@ import {
   type UsersPage,
 } from '../../api/admin'
 import { getCachedSession, getSession } from '../../store/authStore'
+import ConfirmDialog from '../../components/ConfirmDialog'
 
 const STAFF_BRANCH = 'DIRECTIVES'
 const STAFF_ROLE = 'MEMBER'
@@ -38,6 +39,7 @@ export default function ManageUsersSection() {
   const [busyId, setBusyId]   = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [unassigning, setUnassigning] = useState<AdminUser | null>(null)
+  const [removingOrg, setRemovingOrg] = useState<{ user: AdminUser; slug: string } | null>(null)
 
   // Filters / paging state. `query` is the input value; `q` is the debounced
   // value that actually drives requests, so we don't fire one fetch per keystroke.
@@ -145,12 +147,16 @@ export default function ManageUsersSection() {
     }
   }
 
-  async function removeOrg(u: AdminUser, slug: string) {
+  async function confirmRemoveOrg() {
+    if (!removingOrg) return
+    const { user: u, slug } = removingOrg
     setError(null); setBusyId(u.id)
     try {
       await removeUserOrganization(u.id, slug)
+      setRemovingOrg(null)
       reload()
     } catch (e) {
+      setRemovingOrg(null)
       setError((e as Error).message)
     } finally {
       setBusyId(null)
@@ -240,7 +246,15 @@ export default function ManageUsersSection() {
                       {u.organizations.map((m) => (
                         <span key={m.slug} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm border border-border dark:border-[#3f3f46]">
                           {m.slug}
-                          <button onClick={() => removeOrg(u, m.slug)} className="text-red-600">×</button>
+                          <button
+                            type="button"
+                            disabled={busyId === u.id}
+                            onClick={() => setRemovingOrg({ user: u, slug: m.slug })}
+                            aria-label={t('manage.users.removeOrgAria', { org: m.slug, name: u.name ?? u.email })}
+                            className="text-red-600 dark:text-red-400 disabled:opacity-50"
+                          >
+                            ×
+                          </button>
                         </span>
                       ))}
                       {u.organizations.length === 0 && <span className="text-ink-secondary dark:text-[#a1a1aa]">{t('manage.users.noOrgs')}</span>}
@@ -291,69 +305,26 @@ export default function ManageUsersSection() {
       </div>
 
       {unassigning && (
-        <ConfirmUnassignModal
-          user={unassigning}
+        <ConfirmDialog
+          title={t('manage.users.unassignTitle')}
+          body={t('manage.users.unassignBody', { name: unassigning.name ?? unassigning.email })}
+          confirmLabel={t('manage.users.unassignConfirm')}
           busy={busyId === unassigning.id}
           onConfirm={confirmUnassign}
           onCancel={() => setUnassigning(null)}
         />
       )}
-    </div>
-  )
-}
 
-interface ConfirmUnassignModalProps {
-  user: AdminUser
-  busy: boolean
-  onConfirm: () => void
-  onCancel: () => void
-}
-
-function ConfirmUnassignModal({ user, busy, onConfirm, onCancel }: ConfirmUnassignModalProps) {
-  const { t } = useTranslation()
-
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) { if (e.key === 'Escape' && !busy) onCancel() }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [busy, onCancel])
-
-  return (
-    <div
-      className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
-      onClick={() => { if (!busy) onCancel() }}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="unassign-staff-title"
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-white dark:bg-[#27272a] rounded-card border border-border dark:border-[#3f3f46] p-6 flex flex-col gap-4"
-      >
-        <h3 id="unassign-staff-title" className="font-display font-bold text-h4">{t('manage.users.unassignTitle')}</h3>
-        <p className="font-body text-body-sm text-ink-secondary dark:text-[#a1a1aa]">
-          {t('manage.users.unassignBody', { name: user.name ?? user.email })}
-        </p>
-        <div className="flex justify-end gap-2 pt-2">
-          <button
-            type="button"
-            autoFocus
-            disabled={busy}
-            onClick={onCancel}
-            className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary"
-          >
-            {t('manage.cancel')}
-          </button>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={onConfirm}
-            className="px-3 py-1.5 rounded-sm bg-red-600 text-white font-mono text-label uppercase tracking-widest disabled:opacity-50"
-          >
-            {busy ? '…' : t('manage.users.unassignConfirm')}
-          </button>
-        </div>
-      </div>
+      {removingOrg && (
+        <ConfirmDialog
+          title={t('manage.users.removeOrgTitle')}
+          body={t('manage.users.removeOrgBody', { name: removingOrg.user.name ?? removingOrg.user.email, org: removingOrg.slug })}
+          confirmLabel={t('manage.users.removeOrgConfirm')}
+          busy={busyId === removingOrg.user.id}
+          onConfirm={confirmRemoveOrg}
+          onCancel={() => setRemovingOrg(null)}
+        />
+      )}
     </div>
   )
 }

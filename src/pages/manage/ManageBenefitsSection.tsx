@@ -11,6 +11,8 @@ import {
 } from '../../api/content'
 import { useBenefits } from '../../hooks/useContent'
 import { benefitCategoryName } from '../../utils/benefits'
+import ConfirmDialog from '../../components/ConfirmDialog'
+import Modal from '../../components/Modal'
 
 type Tab = 'cards' | 'categories'
 
@@ -58,13 +60,15 @@ export default function ManageBenefitsSection() {
 }
 
 function CardsTab() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const lang: 'es' | 'en' = i18n.language === 'en' ? 'en' : 'es'
   const { data: categories, loading: catLoading } = useBenefits()
   const [cards, setCards] = useState<BenefitCard[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editing, setEditing] = useState<CardDraft | null>(null)
   const [busy, setBusy] = useState(false)
+  const [deleting, setDeleting] = useState<BenefitCard | null>(null)
   const [filter, setFilter] = useState<string>('')
 
   useEffect(() => {
@@ -114,14 +118,18 @@ function CardsTab() {
     }
   }
 
-  async function remove(id: string) {
-    if (!confirm(t('manage.benefits.cards.confirmDelete'))) return
-    setError(null)
+  async function confirmRemove() {
+    if (!deleting) return
+    setError(null); setBusy(true)
     try {
-      await deleteBenefitCard(id)
+      await deleteBenefitCard(deleting.id)
+      setDeleting(null)
       reload()
     } catch (e) {
+      setDeleting(null)
       setError((e as Error).message)
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -182,8 +190,8 @@ function CardsTab() {
                   <td className="px-3 py-2">{c.price ?? '—'}</td>
                   <td className="px-3 py-2">{c.displayOrder}</td>
                   <td className="px-3 py-2 flex gap-2 justify-end">
-                    <button onClick={() => setEditing(c)} className="text-primary font-mono text-label uppercase tracking-widest">{t('manage.edit')}</button>
-                    <button onClick={() => remove(c.id)} className="text-red-600 font-mono text-label uppercase tracking-widest">{t('manage.delete')}</button>
+                    <button type="button" onClick={() => setEditing(c)} className="text-primary font-mono text-label uppercase tracking-widest">{t('manage.edit')}</button>
+                    <button type="button" onClick={() => setDeleting(c)} className="text-red-600 dark:text-red-400 font-mono text-label uppercase tracking-widest">{t('manage.delete')}</button>
                   </td>
                 </tr>
               ))}
@@ -202,6 +210,17 @@ function CardsTab() {
           onCancel={() => setEditing(null)}
         />
       )}
+
+      {deleting && (
+        <ConfirmDialog
+          title={t('manage.benefits.cards.confirmDelete')}
+          body={t('manage.benefits.cards.deleteBody', { title: lang === 'en' ? deleting.titleEn : deleting.titleEs })}
+          confirmLabel={t('manage.delete')}
+          busy={busy}
+          onConfirm={confirmRemove}
+          onCancel={() => setDeleting(null)}
+        />
+      )}
     </div>
   )
 }
@@ -218,80 +237,14 @@ interface EditorProps {
 function CardEditor({ draft, categories, busy, onChange, onSave, onCancel }: EditorProps) {
   const { t } = useTranslation()
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="w-full max-w-2xl bg-white dark:bg-[#27272a] rounded-card border border-border dark:border-[#3f3f46] p-6 flex flex-col gap-4 my-8">
-        <h3 className="font-display font-bold text-h4">
-          {draft.id ? t('manage.benefits.cards.editTitle') : t('manage.benefits.cards.addTitle')}
-        </h3>
-
-        <div className="grid grid-cols-2 gap-3">
-          <SelectField
-            label={t('manage.benefits.cards.col.category')}
-            value={draft.categorySlug}
-            options={categories.map((c) => ({ value: c.slug, label: c.slug }))}
-            onChange={(v) => onChange({ ...draft, categorySlug: v })}
-          />
-          <Field
-            label={t('manage.benefits.cards.col.order')}
-            type="number"
-            value={String(draft.displayOrder)}
-            onChange={(v) => onChange({ ...draft, displayOrder: Number(v) || 0 })}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Field label={t('manage.benefits.cards.titleEs')} value={draft.titleEs} onChange={(v) => onChange({ ...draft, titleEs: v })} />
-          <Field label={t('manage.benefits.cards.titleEn')} value={draft.titleEn} onChange={(v) => onChange({ ...draft, titleEn: v })} />
-        </div>
-
-        <TextArea label={t('manage.benefits.cards.summaryEs')} value={draft.summaryEs} onChange={(v) => onChange({ ...draft, summaryEs: v })} />
-        <TextArea label={t('manage.benefits.cards.summaryEn')} value={draft.summaryEn} onChange={(v) => onChange({ ...draft, summaryEn: v })} />
-
-        <Field
-          label={t('manage.benefits.cards.imageUrl')}
-          value={draft.imageUrl ?? ''}
-          onChange={(v) => onChange({ ...draft, imageUrl: v || null })}
-        />
-
-        <div className="grid grid-cols-2 gap-3">
-          <Field
-            label={t('manage.benefits.cards.ctaUrl')}
-            value={draft.ctaUrl ?? ''}
-            onChange={(v) => onChange({ ...draft, ctaUrl: v || null })}
-          />
-          <Field
-            label={t('manage.benefits.cards.price')}
-            value={draft.price ?? ''}
-            onChange={(v) => onChange({ ...draft, price: v || null })}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Field
-            label={t('manage.benefits.cards.ctaLabelEs')}
-            value={draft.ctaLabelEs ?? ''}
-            onChange={(v) => onChange({ ...draft, ctaLabelEs: v || null })}
-          />
-          <Field
-            label={t('manage.benefits.cards.ctaLabelEn')}
-            value={draft.ctaLabelEn ?? ''}
-            onChange={(v) => onChange({ ...draft, ctaLabelEn: v || null })}
-          />
-        </div>
-
-        <TextArea
-          label={t('manage.benefits.cards.bulletsEs')}
-          value={draft.bulletsEs.join('\n')}
-          onChange={(v) => onChange({ ...draft, bulletsEs: splitLines(v) })}
-        />
-        <TextArea
-          label={t('manage.benefits.cards.bulletsEn')}
-          value={draft.bulletsEn.join('\n')}
-          onChange={(v) => onChange({ ...draft, bulletsEn: splitLines(v) })}
-        />
-
-        <div className="flex justify-end gap-2 pt-2">
-          <button type="button" onClick={onCancel} className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary">
+    <Modal
+      title={draft.id ? t('manage.benefits.cards.editTitle') : t('manage.benefits.cards.addTitle')}
+      onClose={onCancel}
+      busy={busy}
+      size="2xl"
+      footer={
+        <>
+          <button type="button" disabled={busy} onClick={onCancel} className="px-3 py-1.5 font-mono text-label uppercase tracking-widest text-ink-secondary dark:text-[#a1a1aa] disabled:opacity-50">
             {t('manage.cancel')}
           </button>
           <button
@@ -302,9 +255,76 @@ function CardEditor({ draft, categories, busy, onChange, onSave, onCancel }: Edi
           >
             {busy ? '…' : t('manage.save')}
           </button>
-        </div>
+        </>
+      }
+    >
+
+      <div className="grid grid-cols-2 gap-3">
+        <SelectField
+          label={t('manage.benefits.cards.col.category')}
+          value={draft.categorySlug}
+          options={categories.map((c) => ({ value: c.slug, label: c.slug }))}
+          onChange={(v) => onChange({ ...draft, categorySlug: v })}
+        />
+        <Field
+          label={t('manage.benefits.cards.col.order')}
+          type="number"
+          value={String(draft.displayOrder)}
+          onChange={(v) => onChange({ ...draft, displayOrder: Number(v) || 0 })}
+        />
       </div>
-    </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field label={t('manage.benefits.cards.titleEs')} value={draft.titleEs} onChange={(v) => onChange({ ...draft, titleEs: v })} />
+        <Field label={t('manage.benefits.cards.titleEn')} value={draft.titleEn} onChange={(v) => onChange({ ...draft, titleEn: v })} />
+      </div>
+
+      <TextArea label={t('manage.benefits.cards.summaryEs')} value={draft.summaryEs} onChange={(v) => onChange({ ...draft, summaryEs: v })} />
+      <TextArea label={t('manage.benefits.cards.summaryEn')} value={draft.summaryEn} onChange={(v) => onChange({ ...draft, summaryEn: v })} />
+
+      <Field
+        label={t('manage.benefits.cards.imageUrl')}
+        value={draft.imageUrl ?? ''}
+        onChange={(v) => onChange({ ...draft, imageUrl: v || null })}
+      />
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field
+          label={t('manage.benefits.cards.ctaUrl')}
+          value={draft.ctaUrl ?? ''}
+          onChange={(v) => onChange({ ...draft, ctaUrl: v || null })}
+        />
+        <Field
+          label={t('manage.benefits.cards.price')}
+          value={draft.price ?? ''}
+          onChange={(v) => onChange({ ...draft, price: v || null })}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field
+          label={t('manage.benefits.cards.ctaLabelEs')}
+          value={draft.ctaLabelEs ?? ''}
+          onChange={(v) => onChange({ ...draft, ctaLabelEs: v || null })}
+        />
+        <Field
+          label={t('manage.benefits.cards.ctaLabelEn')}
+          value={draft.ctaLabelEn ?? ''}
+          onChange={(v) => onChange({ ...draft, ctaLabelEn: v || null })}
+        />
+      </div>
+
+      <TextArea
+        label={t('manage.benefits.cards.bulletsEs')}
+        value={draft.bulletsEs.join('\n')}
+        onChange={(v) => onChange({ ...draft, bulletsEs: splitLines(v) })}
+      />
+      <TextArea
+        label={t('manage.benefits.cards.bulletsEn')}
+        value={draft.bulletsEn.join('\n')}
+        onChange={(v) => onChange({ ...draft, bulletsEn: splitLines(v) })}
+      />
+    </Modal>
   )
 }
 

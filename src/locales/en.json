@@ -40,7 +40,8 @@
         "role": "Role",
         "order": "Order",
         "department": "Department"
-      }
+      },
+      "deleteBody": "{{name}} will be removed from the {{year}} staff. This can't be undone."
     },
     "benefits": {
       "tabs": {
@@ -78,7 +79,8 @@
           "category": "Category",
           "price": "Price",
           "order": "Order"
-        }
+        },
+        "deleteBody": "The card \"{{title}}\" will be deleted. This can't be undone."
       }
     },
     "users": {
@@ -103,7 +105,11 @@
       "filterAllOrgs": "All organizations",
       "pageStatus": "Page {{page}} of {{pages}} · {{total}} users",
       "prev": "‹ Prev",
-      "next": "Next ›"
+      "next": "Next ›",
+      "removeOrgAria": "Remove {{name}} from {{org}}",
+      "removeOrgTitle": "Remove from organization?",
+      "removeOrgBody": "{{name}} will no longer be a member of {{org}}. You can add them back later.",
+      "removeOrgConfirm": "Remove"
     }
   },
   "profile": {
