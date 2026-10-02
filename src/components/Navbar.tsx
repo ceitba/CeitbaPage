@@ -9,7 +9,8 @@ export default function Navbar() {
 
   const toggleLanguage = () => {
     const next = i18n.language === 'es' ? 'en' : 'es'
-    // i18n.on('languageChanged') in src/i18n.ts handles localStorage + server sync.
+    // languageChanged listeners persist it: src/i18n.ts writes localStorage,
+    // ThemeContext PATCHes the server for signed-in users.
     i18n.changeLanguage(next)
   }
 
