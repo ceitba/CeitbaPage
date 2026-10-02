@@ -128,7 +128,8 @@
       "unauthorized": "Solo cuentas @itba.edu.ar pueden iniciar sesión.",
       "unauthorized_workspace": "Solo cuentas del workspace ITBA pueden iniciar sesión.",
       "unverified_email": "Tu correo de Google aún no está verificado.",
-      "auth_failed": "No pudimos completar el inicio de sesión. Probá de nuevo."
+      "auth_failed": "No pudimos completar el inicio de sesión. Probá de nuevo.",
+      "invalid_state": "La sesión de inicio expiró o no es válida. Probá iniciar sesión de nuevo."
     }
   },
   "hero": {
@@ -244,6 +245,7 @@
   },
   "errors": {
     "somethingWrong": "Algo salió mal",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "dismiss": "Cerrar"
   }
 }
